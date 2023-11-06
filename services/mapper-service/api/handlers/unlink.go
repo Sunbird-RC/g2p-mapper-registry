@@ -1,12 +1,13 @@
 package handlers
 
 import (
+	"strings"
+	"time"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sunbirdrc/mapper-service/services"
 	"github.com/sunbirdrc/mapper-service/swagger_gen/models"
 	"github.com/sunbirdrc/mapper-service/swagger_gen/restapi/operations"
-	"strings"
-	"time"
 )
 
 // UnlinkHandler handles a request for linking an entry
@@ -44,7 +45,7 @@ func (u unlink) Handle(params operations.PostG2pMapperUnlinkParams) middleware.R
 	}
 
 	onUpdateRequest := u.createOnUnlinkRequestPayload(params, unlinkResponses)
-	services.NewCallbackService().Callback(onUpdateRequest, "on-unlink")
+	services.NewCallbackService(string(params.Body.Header.SenderURI)).Callback(onUpdateRequest, "on-unlink")
 
 	response := operations.NewPostG2pMapperUnlinkDefault(200)
 	response.Payload = &operations.PostG2pMapperUnlinkDefaultBody{

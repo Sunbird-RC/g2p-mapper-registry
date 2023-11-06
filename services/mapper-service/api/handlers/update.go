@@ -1,12 +1,13 @@
 package handlers
 
 import (
+	"strings"
+	"time"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sunbirdrc/mapper-service/services"
 	"github.com/sunbirdrc/mapper-service/swagger_gen/models"
 	"github.com/sunbirdrc/mapper-service/swagger_gen/restapi/operations"
-	"strings"
-	"time"
 )
 
 // UpdateHandler handles a request for linking an entry
@@ -45,7 +46,7 @@ func (u update) Handle(params operations.PutG2pMapperUpdateParams) middleware.Re
 	}
 
 	onUpdateRequest := u.createOnUpdateRequestPayload(params, updateResponses)
-	services.NewCallbackService().Callback(onUpdateRequest, "on-update")
+	services.NewCallbackService(string(params.Body.Header.SenderURI)).Callback(onUpdateRequest, "on-update")
 
 	response := operations.NewPutG2pMapperUpdateDefault(200)
 	response.Payload = &operations.PutG2pMapperUpdateDefaultBody{
